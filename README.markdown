@@ -126,7 +126,10 @@ cat("First-pass markers computed after filtering: ", nrow(all.markers), " rows\n
 
 # View results
 View(all.markers)
+```
+<img width="665" height="1064" alt="Weixin Image_20250909165253_134_103" src="https://github.com/user-attachments/assets/a1fa092b-1273-41d3-8df6-10a96ddc11ed" />
 
+```R
 # Find conserved markers
 cons_out <- get_conserved_for_all(
   Cell.integrated,
@@ -143,7 +146,12 @@ cons.condition <- cons.condition %>% select(cluster, gene, everything())
 cat("Conserved markers kept: ", ifelse(nrow(cons.condition) > 0, nrow(cons.condition), 0), " rows\n")
 if (nrow(cons.condition) > 0) View(cons.condition)
 if (nrow(skipped.info) > 0) View(skipped.info)
+```
+<img width="1905" height="860" alt="Weixin Image_20250909165512_135_103" src="https://github.com/user-attachments/assets/b3a3e5e3-ff00-4f97-bc60-2e096b6cada9" />
+<img width="270" height="155" alt="Weixin Image_20250909165523_136_103" src="https://github.com/user-attachments/assets/3b198841-fe23-4ea6-ad04-f618ebe192ef" />
 
+
+```R
 # Compute specificity scores
 cons.joined <- cons.condition %>%
   dplyr::left_join(
@@ -156,12 +164,18 @@ cons.joined <- cons.joined %>%
   select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, everything())
 cat("Conserved + specificity (joined) rows: ", ifelse(nrow(cons.joined) > 0, nrow(cons.joined), 0), "\n")
 if (nrow(cons.joined) > 0) View(cons.joined)
+```
+<img width="2475" height="1075" alt="Weixin Image_20250909165801_137_103" src="https://github.com/user-attachments/assets/8a63ec8b-01d8-411d-9890-3ed92089a1b4" />
 
+```R
 # Select top canonical markers
+# Here in the below script, you can set either "n = 6" to selct top 6 canonical markers, or set "n = 4" to select top 4 canonical markers
+# or to set the other top canonical numbers, for exmaple, n = 1, n = 2, n = 3, n=4, n = 5, n = 6, n = 7.
+# I suggest pick a number from 2 to 4, dependes on your purpose
 canonical <- cons.joined %>%
   dplyr::filter(!is.na(spec_score), avg_log2FC > 0.5, (pct.1 - pct.2) >= 0.20) %>%
   dplyr::group_by(cluster) %>%
-  dplyr::slice_max(order_by = spec_score, n = 6, with_ties = FALSE) %>%
+  dplyr::slice_max(order_by = spec_score, n = 4, with_ties = FALSE) %>%  
   dplyr::ungroup() %>%
   select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, everything()) %>%
   mutate(cluster = as.numeric(as.character(cluster))) %>%
@@ -170,7 +184,8 @@ cat("Canonical conserved markers kept: ", ifelse(nrow(canonical) > 0, nrow(canon
 if (nrow(canonical) > 0) View(canonical)
 ```
 
-[Insert example data frame for `View(canonical)` here]
+<img width="2475" height="1075" alt="Weixin Image_20250909165801_137_103" src="https://github.com/user-attachments/assets/78b270be-6d12-49e2-8545-2bfd056793d5" />
+
 
 #### Specificity Score Calculation
 The specificity score is computed to rank genes based on their differential expression and specificity to a cluster. The formula is defined as:
