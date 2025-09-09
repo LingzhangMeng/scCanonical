@@ -3,29 +3,36 @@
 ## Overview
 The `scCanonical` R package is designed to identify and rank canonical markers for downstream cluster annotations in single-cell RNA sequencing (scRNA-seq) analysis. It is specifically developed to work with integrated Seurat objects created using the `Seurat` R package. The package facilitates the calculation of conserved markers across conditions, computes specificity scores, and visualizes results to aid in the interpretation of scRNA-seq data.
 
-#### Specificity Score Calculation
-The specificity score is computed to rank genes based on their differential expression and specificity to a cluster. The formula is defined as:
+## Why you join before computing specificity
+FindConservedMarkers() produces a meta-analysis table (p-values across groups), but often doesn’t include avg_log2FC, pct.1, pct.2. FindAllMarkers() does include those columns (computed broadly cluster vs. rest). Joining on (gene, cluster) gives you consistent effect size and prevalence measures to compute 
+SpecScore for the already-conserved set. This keeps your specificity ranking aligned to your integration/normalization choices and to the clusters exactly as they were defined.
 
-\[
-\text{spec_score} = \text{avg_log2FC} \times \max(0, \text{pct.1} - \text{pct.2})
-\]
+#### Specificity Score Calculation / Mathematical concept
+##### The quantities & formulas
+Consider a gene 𝑔 and a cluster 𝑐. Let “others” (not 𝑐) be ¬𝑐.
 
-Where:
-- `avg_log2FC`: Average log2 fold change of the gene in the cluster compared to others.
-- `pct.1`: Percentage of cells in the cluster expressing the gene.
-- `pct.2`: Percentage of cells outside the cluster expressing the gene.
+1) Average expression & log fold-change
+   Seurat’s DE returns an effect size as log2 fold change:
+<img width="526" height="116" alt="Weixin Image_20250909172325_139_103" src="https://github.com/user-attachments/assets/1ef2f6e0-f215-4165-8bb1-b59024445cd8" />
+<img width="860" height="144" alt="Weixin Image_20250909172418_140_103" src="https://github.com/user-attachments/assets/acf22261-4846-4625-b709-8917f3aa51de" />
 
-This formula prioritizes genes with high differential expression and specific expression within the cluster. The function `add_specificity` implements this calculation:
 
-```R
-add_specificity <- function(df) {
-  if (all(c("avg_log2FC", "pct.1", "pct.2") %in% colnames(df))) {
-    df$spec_score <- df$avg_log2FC * pmax(0, df$pct.1 - df$pct.2)
-  } else {
-    df$spec_score <- NA_real_
-  }
-  df
-}
+2) Detection rates (prevalence)
+   <img width="1020" height="109" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
+These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
+
+3) Specificity score (my algorithm)
+<img width="1246" height="80" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
+<img width="1330" height="238" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
+
+4) Canonical selection rule
+   After computing SpecScore, you apply two simple gates before ranking:
+   <img width="860" height="85" alt="image" src="https://github.com/user-attachments/assets/0d6557db-91b8-4c65-a98b-c89732c6b3a3" />
+Then you take the top 6 (for exmaple) by SpecScore per cluster:
+<img width="851" height="84" alt="image" src="https://github.com/user-attachments/assets/a0760f60-6b4d-44fd-b2e3-9d249cb6d5fe" />
+<img width="1265" height="93" alt="image" src="https://github.com/user-attachments/assets/ff572e70-064a-4c6b-8890-b975cedd325d" />
+
+
 ```
 
 ## Installation
