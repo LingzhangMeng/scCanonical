@@ -184,7 +184,8 @@ cat("Canonical conserved markers kept: ", ifelse(nrow(canonical) > 0, nrow(canon
 if (nrow(canonical) > 0) View(canonical)
 ```
 
-<img width="2475" height="1075" alt="Weixin Image_20250909165801_137_103" src="https://github.com/user-attachments/assets/78b270be-6d12-49e2-8545-2bfd056793d5" />
+<img width="2506" height="266" alt="Weixin Image_20250909170655_138_103" src="https://github.com/user-attachments/assets/75c88eab-3fee-44c6-8bed-480efe39d6d7" />
+
 
 
 #### Specificity Score Calculation
