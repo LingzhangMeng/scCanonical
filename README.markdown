@@ -94,9 +94,8 @@ Cell.integrated <- FindClusters(Cell.integrated, pc.use = 1:10, resolution = 0.4
 
 # Visualize integrated data
 DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5, label = TRUE, label.size = 6, label.box = FALSE)
-<img width="906" height="757" alt="Rplot" src="https://github.com/user-attachments/assets/cd7e5c34-210c-459c-8b88-13726287b7d4" />
-
 ```
+![Dimplot1](https://github.com/user-attachments/assets/36ea77d1-fd1a-452c-9e46-bd098951001f)
 
 
 ### 3. Marker Identification
