@@ -41,23 +41,21 @@ Read and visualize individual Seurat objects for different conditions (e.g., Con
 
 ```R
 # Load Seurat objects
-Control <- readRDS("/media/meng/Bioinformatics/Wound Healing/2. rds files/1.1 Seurat.Control.rds")
-p.Control <- DimPlot(Control, pt.size = 0.5, label = TRUE, label.size = 6, raster = FALSE) + ggtitle("Control")
-
-Wounded <- readRDS("/media/meng/Bioinformatics/Wound Healing/2. rds files/2.1 Seurat.Wounded.rds")
-p.Wounded <- DimPlot(Wounded, pt.size = 0.5, label = TRUE, label.size = 6, raster = FALSE) + ggtitle("Wounded")
+# Generate seurat objects Control and Wounded in advance with R package Seurat 
+Control <- readRDS("Path/Control.rds")
+Wounded <- readRDS("Path/Wounded.rds")
 ```
-
-[Insert example visualizations for `p.Control` and `p.Wounded` here]
 
 ### 2. Data Integration
 Prepare the Seurat objects for integration by assigning condition metadata and performing SCTransform, feature selection, and integration.
 
 ```R
 # Assign condition metadata
+# In this tutorial, we use "condition" as the key word for defining groups 
 Control$condition <- "Control"
 Wounded$condition <- "Wounded"
 
+# These are the standard procedure to create integrated seurat object
 # Create a list of Seurat objects
 Cell.list <- list(Control, Wounded)
 
@@ -94,18 +92,14 @@ Cell.integrated <- FindNeighbors(Cell.integrated, reduction = "pca", dims = 1:30
 Cell.integrated <- FindClusters(Cell.integrated, pc.use = 1:10, resolution = 0.42, group.singletons = TRUE, verbose = FALSE)
 
 # Visualize integrated data
-p <- DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5, label = TRUE, label.size = 6, label.box = FALSE)
-ggsave("3.1 DimPlot-Integrated-NoLabel.pdf", plot = p, width = 14, height = 10, units = "cm")
-ggsave("3.1 DimPlot-Integrated-NoLabel.jpeg", plot = p, width = 14, height = 10, units = "cm")
-```
+DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5, label = TRUE, label.size = 6, label.box = FALSE)
+
+
 
 ### 3. Marker Identification
 Identify conserved markers across conditions and compute specificity scores.
 
 ```R
-# Load integrated Seurat object
-Cell.integrated <- readRDS("F:/Wound Healing/2. rds files/3.2 Seurat.Cell.integrated.annotated.rds")
-
 # Safety checks
 if (!"condition" %in% colnames(Cell.integrated@meta.data)) {
   stop("'condition' metadata column is missing in Cell.integrated.")
