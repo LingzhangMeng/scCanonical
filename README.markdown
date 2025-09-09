@@ -3,6 +3,31 @@
 ## Overview
 The `scCanonical` R package is designed to identify and rank canonical markers for downstream cluster annotations in single-cell RNA sequencing (scRNA-seq) analysis. It is specifically developed to work with integrated Seurat objects created using the `Seurat` R package. The package facilitates the calculation of conserved markers across conditions, computes specificity scores, and visualizes results to aid in the interpretation of scRNA-seq data.
 
+#### Specificity Score Calculation
+The specificity score is computed to rank genes based on their differential expression and specificity to a cluster. The formula is defined as:
+
+\[
+\text{spec_score} = \text{avg_log2FC} \times \max(0, \text{pct.1} - \text{pct.2})
+\]
+
+Where:
+- `avg_log2FC`: Average log2 fold change of the gene in the cluster compared to others.
+- `pct.1`: Percentage of cells in the cluster expressing the gene.
+- `pct.2`: Percentage of cells outside the cluster expressing the gene.
+
+This formula prioritizes genes with high differential expression and specific expression within the cluster. The function `add_specificity` implements this calculation:
+
+```R
+add_specificity <- function(df) {
+  if (all(c("avg_log2FC", "pct.1", "pct.2") %in% colnames(df))) {
+    df$spec_score <- df$avg_log2FC * pmax(0, df$pct.1 - df$pct.2)
+  } else {
+    df$spec_score <- NA_real_
+  }
+  df
+}
+```
+
 ## Installation
 To install `scCanonical` from GitHub, use the following commands in R:
 
@@ -187,32 +212,6 @@ if (nrow(canonical) > 0) View(canonical)
 <img width="2506" height="266" alt="Weixin Image_20250909170655_138_103" src="https://github.com/user-attachments/assets/75c88eab-3fee-44c6-8bed-480efe39d6d7" />
 
 
-
-#### Specificity Score Calculation
-The specificity score is computed to rank genes based on their differential expression and specificity to a cluster. The formula is defined as:
-
-\[
-\text{spec_score} = \text{avg_log2FC} \times \max(0, \text{pct.1} - \text{pct.2})
-\]
-
-Where:
-- `avg_log2FC`: Average log2 fold change of the gene in the cluster compared to others.
-- `pct.1`: Percentage of cells in the cluster expressing the gene.
-- `pct.2`: Percentage of cells outside the cluster expressing the gene.
-
-This formula prioritizes genes with high differential expression and specific expression within the cluster. The function `add_specificity` implements this calculation:
-
-```R
-add_specificity <- function(df) {
-  if (all(c("avg_log2FC", "pct.1", "pct.2") %in% colnames(df))) {
-    df$spec_score <- df$avg_log2FC * pmax(0, df$pct.1 - df$pct.2)
-  } else {
-    df$spec_score <- NA_real_
-  }
-  df
-}
-```
-
 ### 4. Visualization
 Generate faceted plots to compare conserved and canonical markers.
 
@@ -237,13 +236,21 @@ cb_palette <- c("#ed1299", "#09f9f5", "#246b93", "#cc8e12", "#d561dd", "#c93f00"
                 "#22547f", "#db5e92", "#edd05e", "#6f25e8", "#0dbc21", "#280f7a", "#6373ed", "#5b910f")
 custom_colors <- cb_palette[1:length(cluster_order)]
 names(custom_colors) <- cluster_order
-
-# Generate plots
-plot_canonicals(cons.joined, canonical, custom_colors)
-plot_canonicals_inline(cons.joined, canonical, custom_colors)
 ```
 
-[Insert example visualizations for `plot_canonicals` and `plot_canonicals_inline` here]
+```R
+# Generate plots, canonical markers will show on each cluster, seperately
+plot_canonicals(cons.joined, canonical, custom_colors)
+```
+![Rplot](https://github.com/user-attachments/assets/0524f74c-ff44-4ddf-b0b7-798a987542a1)
+
+```R
+# Generate plots, canonical markers will show on each cluster, facetly
+plot_canonicals_inline(cons.joined, canonical, custom_colors)
+```
+![Rplot01](https://github.com/user-attachments/assets/3ef1851d-20c1-4be7-946e-d066746a236d)
+
+
 
 ## Output
 - **Data Frames**: The workflow generates data frames (`all.markers`, `cons.condition`, `cons.joined`, `canonical`) that can be viewed using `View()` for manual inspection.
