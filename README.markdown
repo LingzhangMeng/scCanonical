@@ -54,7 +54,8 @@ Prepare the Seurat objects for integration by assigning condition metadata and p
 # In this tutorial, we use "condition" as the key word for defining groups 
 Control$condition <- "Control"
 Wounded$condition <- "Wounded"
-
+```
+```R
 # These are the standard procedure to create integrated seurat object
 # Create a list of Seurat objects
 Cell.list <- list(Control, Wounded)
@@ -93,7 +94,7 @@ Cell.integrated <- FindClusters(Cell.integrated, pc.use = 1:10, resolution = 0.4
 
 # Visualize integrated data
 DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5, label = TRUE, label.size = 6, label.box = FALSE)
-
+```
 
 
 ### 3. Marker Identification
