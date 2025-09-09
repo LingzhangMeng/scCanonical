@@ -1,0 +1,20 @@
+Package: scCanonical
+Title: Analysis of Conserved and Specific Markers in Single-Cell RNA Sequencing
+Version: 0.1.0
+Authors@R: person("Lingzhang", "Meng", email = "187398958@qq.com", role = c("aut", "cre"))
+Description: The scCanonical package provides tools for analyzing single-cell RNA
+    sequencing data. It focuses on identifying conserved markers across clusters
+    and computing specificity scores for differential expression analysis. The
+    package includes functions for marker identification using Seurat, calculating
+    specificity scores, and visualizing results with customizable scatter plots.
+    It is designed to facilitate robust single-cell data analysis in biological
+    research.
+Depends: R (>= 3.6.0)
+Imports: Seurat (>= 4.0.0), dplyr (>= 1.0.0), ggplot2 (>= 3.3.0), ggrepel (>= 0.9.0)
+Suggests: none
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Maintainer: Lingzhang Meng <lzmeng@gxams.org.cn>
+Config/testthat/edition: 3
