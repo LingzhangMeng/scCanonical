@@ -43,7 +43,7 @@ Then you take the top 6 (for exmaple) by SpecScore per cluster:
 <img width="605" height="40" alt="image" src="https://github.com/user-attachments/assets/ff572e70-064a-4c6b-8890-b975cedd325d" />
 
 
-```
+
 
 ## Installation
 To install `scCanonical` from GitHub, use the following commands in R:
