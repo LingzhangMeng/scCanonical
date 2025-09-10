@@ -56,24 +56,15 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 
 # Install scCanonical
 devtools::install_github("LingzhangMeng/scCanonical")
+
+# Check
+library(scCanonical)
 ```
 
 ## Dependencies
 The package requires the following R packages, which should be installed prior to using `scCanonical`:
+Seurat, dplyr, ggplot2, reshape2 and ggrepel
 
-```R
-library(Seurat)
-library(dplyr)
-library(ggplot2)
-library(reshape2)
-library(ggrepel)
-```
-
-Load `scCanonical` after installing dependencies:
-
-```R
-library(scCanonical)
-```
 
 ## Workflow
 The following workflow demonstrates how to use `scCanonical` to process scRNA-seq data, integrate datasets, identify canonical markers, and visualize results.
@@ -82,6 +73,14 @@ The following workflow demonstrates how to use `scCanonical` to process scRNA-se
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
 ```R
+# Load dependencies
+library(Seurat)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(ggrepel)
+# Load scCanonical
+library(scCanonical)
 # Load Seurat objects
 # Generate seurat objects Control and Wounded in advance with R package Seurat 
 Control <- readRDS("Path/Control.rds")
