@@ -22,8 +22,8 @@ Consider a gene 𝑔 and a cluster 𝑐. Let “others” (not 𝑐) be ¬𝑐.
 These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
 
 3) Specificity score (my algorithm)
-<img width="1246" height="80" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
-<img width="1330" height="238" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
+<img width="1498.4" height="32" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
+<img width="532" height="95.2" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
 
 4) Canonical selection rule
    After computing SpecScore, you apply two simple gates before ranking:
