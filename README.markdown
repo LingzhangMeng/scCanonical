@@ -203,7 +203,7 @@ cons.joined <- cons.condition %>%
   add_specificity()
 
 cons.joined <- cons.joined %>% 
-  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, everything())
+  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2,  everything())
 cat("Conserved + specificity (joined) rows: ", ifelse(nrow(cons.joined) > 0, nrow(cons.joined), 0), "\n")
 if (nrow(cons.joined) > 0) View(cons.joined)
 ```
@@ -219,7 +219,7 @@ canonical <- cons.joined %>%
   dplyr::group_by(cluster) %>%
   dplyr::slice_max(order_by = spec_score, n = 4, with_ties = FALSE) %>%  
   dplyr::ungroup() %>%
-  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, everything()) %>%
+  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, highlight, everything()) %>%
   mutate(cluster = as.numeric(as.character(cluster))) %>%
   arrange(cluster, desc(spec_score))
 cat("Canonical conserved markers kept: ", ifelse(nrow(canonical) > 0, nrow(canonical), 0), " rows\n")
