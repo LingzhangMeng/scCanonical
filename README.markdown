@@ -34,7 +34,7 @@ These are fractions of cells with nonzero expression (after normalization on the
 
 4) Canonical selection rule
    After computing SpecScore, you apply two simple gates before ranking:
-   <img width="608" height="60" alt="image" src="https://github.com/user-attachments/assets/0d6557db-91b8-4c65-a98b-c89732c6b3a3" />
+   <img width="407" height="40" alt="image" src="https://github.com/user-attachments/assets/0d6557db-91b8-4c65-a98b-c89732c6b3a3" />
    
 Then you take the top 6 (for exmaple) by SpecScore per cluster:
 
