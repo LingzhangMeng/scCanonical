@@ -169,7 +169,7 @@ cat("First-pass markers computed after filtering: ", nrow(all.markers), " rows\n
 # View results
 View(all.markers)
 ```
-<img width="665" height="1064" alt="Weixin Image_20250909165253_134_103" src="https://github.com/user-attachments/assets/a1fa092b-1273-41d3-8df6-10a96ddc11ed" />
+<img width="333" height="532" alt="Weixin Image_20250909165253_134_103" src="https://github.com/user-attachments/assets/a1fa092b-1273-41d3-8df6-10a96ddc11ed" />
 
 ```R
 # Find conserved markers
@@ -189,8 +189,8 @@ cat("Conserved markers kept: ", ifelse(nrow(cons.condition) > 0, nrow(cons.condi
 if (nrow(cons.condition) > 0) View(cons.condition)
 if (nrow(skipped.info) > 0) View(skipped.info)
 ```
-<img width="1905" height="860" alt="Weixin Image_20250909165512_135_103" src="https://github.com/user-attachments/assets/b3a3e5e3-ff00-4f97-bc60-2e096b6cada9" />
-<img width="270" height="155" alt="Weixin Image_20250909165523_136_103" src="https://github.com/user-attachments/assets/3b198841-fe23-4ea6-ad04-f618ebe192ef" />
+<img width="923" height="430" alt="Weixin Image_20250909165512_135_103" src="https://github.com/user-attachments/assets/b3a3e5e3-ff00-4f97-bc60-2e096b6cada9" />
+<img width="135" height="78" alt="Weixin Image_20250909165523_136_103" src="https://github.com/user-attachments/assets/3b198841-fe23-4ea6-ad04-f618ebe192ef" />
 
 
 ```R
