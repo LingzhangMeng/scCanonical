@@ -79,10 +79,11 @@ library(dplyr)
 library(ggplot2)
 library(reshape2)
 library(ggrepel)
+
 # Load scCanonical
 library(scCanonical)
-# Load Seurat objects
-# Generate seurat objects Control and Wounded in advance with R package Seurat 
+
+# Load Seurat objects created by the R package Seurat in advance
 Control <- readRDS("Path/Control.rds")
 Wounded <- readRDS("Path/Wounded.rds")
 ```
