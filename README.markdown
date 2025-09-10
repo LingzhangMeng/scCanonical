@@ -38,8 +38,8 @@ These are fractions of cells with nonzero expression (after normalization on the
    
 Then you take the top 6 (for exmaple) by SpecScore per cluster:
 
-<img width="608" height="60" alt="image" src="https://github.com/user-attachments/assets/a0760f60-6b4d-44fd-b2e3-9d249cb6d5fe" />
-<img width="817" height="60" alt="image" src="https://github.com/user-attachments/assets/ff572e70-064a-4c6b-8890-b975cedd325d" />
+<img width="405" height="40" alt="image" src="https://github.com/user-attachments/assets/a0760f60-6b4d-44fd-b2e3-9d249cb6d5fe" />
+<img width="605" height="40" alt="image" src="https://github.com/user-attachments/assets/ff572e70-064a-4c6b-8890-b975cedd325d" />
 
 
 ```
