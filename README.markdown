@@ -14,15 +14,18 @@ Consider a gene 𝑔 and a cluster 𝑐. Let “others” (not 𝑐) be ¬𝑐.
 1) Average expression & log fold-change
    Seurat’s DE returns an effect size as log2 fold change:
 <img width="315.6" height="69.6" alt="Weixin Image_20250909172325_139_103" src="https://github.com/user-attachments/assets/1ef2f6e0-f215-4165-8bb1-b59024445cd8" />
+
 <img width="516" height="86.4" alt="Weixin Image_20250909172418_140_103" src="https://github.com/user-attachments/assets/acf22261-4846-4625-b709-8917f3aa51de" />
 
 
 2) Detection rates (prevalence)
    <img width="408" height="43.6" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
+   
 These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
 
 3) Specificity score (my algorithm)
 <img width="1498.4" height="32" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
+
 <img width="532" height="95.2" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
 
 4) Canonical selection rule
