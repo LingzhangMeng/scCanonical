@@ -28,7 +28,7 @@ These are fractions of cells with nonzero expression (after normalization on the
 
 3) Specificity score (my algorithm)
    
-<img width="374" height="40" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
+<img width="562" height="60" alt="Weixin Image_20250909172610_142_103" src="https://github.com/user-attachments/assets/7466f16f-8c8d-467d-89bd-fd7a7b0be4e1" />
 
 <img width="672" height="120" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
 
