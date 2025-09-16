@@ -103,7 +103,7 @@ Wounded$condition <- "Wounded"
 Cell.list <- list(Control, Wounded)
 
 # Remove individual objects to save memory
-rm(Control, Wounded, p.Control, p.Wounded)
+rm(Control, Wounded)
 
 # Apply SCTransform to each object
 for (i in 1:length(Cell.list)) {
