@@ -22,7 +22,7 @@ Consider a gene 𝑔 and a cluster 𝑐. Let “others” (not 𝑐) be ¬𝑐.
 
 2) Detection rates (prevalence)
    
-   <img width="374" height="30" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
+   <img width="450" height="40" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
    
 These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
 
