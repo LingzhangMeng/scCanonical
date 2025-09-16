@@ -36,7 +36,7 @@ These are fractions of cells with nonzero expression (after normalization on the
    After computing SpecScore, you apply two simple gates before ranking:
    <img width="407" height="40" alt="image" src="https://github.com/user-attachments/assets/0d6557db-91b8-4c65-a98b-c89732c6b3a3" />
    
-Then you take the top 6 (for exmaple) by SpecScore per cluster:
+Then you take the top 4 (for exmaple) by SpecScore per cluster:
 
 <img width="374" height="40" alt="image" src="https://github.com/user-attachments/assets/a0760f60-6b4d-44fd-b2e3-9d249cb6d5fe" />
 
