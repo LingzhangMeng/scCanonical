@@ -114,6 +114,9 @@ saveRDS(Cell.integrated, "//path/Seurat.Integration.rds"
 ### 1. Load and Prepare Seurat Objects
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
+# Extend Rstudio Console to output 1000000 lines
+rstudioapi::writeRStudioPreference("console_max_lines", 1000000L)
+
 # 1. Load packages
 library(scCanonical)
 library(Seurat)
