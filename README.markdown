@@ -111,6 +111,59 @@ Clusters:  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 ```
 
 
+```R
+cat("\nCells per cluster:\n")
+print(table(Idents(Cell.integrated)))
+```
+
+
+```
+output
+    0     1     2     3     4     5     6     7     8     9    10    11    12 
+16108  8473  5947  5915  4104  3958  3761  2251  2031  1890  1750  1397  1294 
+   13 
+ 1263 
+```
+
+```R
+cat("\nCells per cluster x condition:\n")
+print(table(Cell.integrated$seurat_clusters, Cell.integrated$condition))
+```
+
+```
+output
+     Para_MVIneg Para_MVIpos Tumor_MVIneg Tumor_MVIpos
+  0         5200        3527         3280         4101
+  1         1800        5222          443         1008
+  2           28         159         5637          123
+  3           65          47          435         5368
+  4         2444         884          297          479
+  5          875         896         1163         1024
+  6            2           1            1         3757
+  7          974         949          128          200
+  8            0           0         2026            5
+  9          744        1122           18            6
+  10           1           2            0         1747
+  11         387         415          436          159
+  12         114         352          165          663
+  13         417         612           59          175
+```
+
+```R
+# UMAP visualization (plot not shown; will be inserted later)
+DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5,
+        label = TRUE, label.size = 6, label.box = FALSE)
+```
+
+```
+<img width="672" height="677" alt="image" src="https://github.com/user-attachments/assets/6095c065-c962-48fc-9a28-1f4c39afb165" />
+
+```
+
+
+
+
+
 ## Notes
 - Ensure that the Seurat object contains `condition` and `seurat_clusters` metadata columns before running marker identification.
 - The `RNA` assay is used by default for differential expression analysis, but you can switch to `SCT` if preferred.
