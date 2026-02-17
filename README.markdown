@@ -76,7 +76,7 @@ Control@condition <- "Control"     # Here, you MUST use the word condition for a
 Tumor@condition <- "Tumor"         # Here, you MUST use the word condition for assigning group informaiton
 ````
 
-```r
+```R
 # Then prepare list
 for (i in 1:length(Cell.list)) {
   Cell.list[[i]] <- SCTransform(Cell.list[[i]], verbose = FALSE)
@@ -93,13 +93,27 @@ Cell.integrated <- IntegrateData(anchorset = Cell.anchors, normalization.method 
                                  dims = 1:30, new.assay.name = "rpca", k.weight = 50, verbose = F)
 
 Cell.integrated <- ScaleData(Cell.integrated, verbose = T)
+
+Cell.integrated <- RunPCA(Cell.integrated, npcs = 30, verbose = T)
+
+Cell.integrated <- RunUMAP(Cell.integrated, reduction = "pca", dims = 1:30, verbose = T)
+
+Cell.integrated <- FindNeighbors(Cell.integrated, reduction = "pca", dims = 1:30, verbose = T)
+
+Cell.integrated <- FindClusters(Cell.integrated, pc.use = 1:10, resolution = 0.07, group.singletons = TRUE, verbose = 0, save.SNN = T)
+
+DimPlot(Cell.integrated, raster = F, pt.size = 0.5, 
+                         label = T, label.size = 6, label.box = F)
+
+saveRDS(Cell.integrated, "//path/Seurat.Integration.rds"
+
+
 ```
 
 ```R
 ### 1. Load and Prepare Seurat Objects
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
-```R
 # 1. Load packages
 library(scCanonical)
 library(Seurat)
