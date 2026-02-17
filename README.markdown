@@ -74,14 +74,17 @@ Read and visualize individual Seurat objects for different conditions (e.g., Con
 
 ```R
 # Load dependencies
+library(scCanonical)
 library(Seurat)
 library(dplyr)
 library(ggplot2)
-library(reshape2)
 library(ggrepel)
+```
 
-# Load scCanonical
-library(scCanonical)
+```R
+ls("package:scCanonical")
+```
+
 
 # Load Seurat objects created by the R package Seurat in advance
 Control <- readRDS("Path/Control.rds")
