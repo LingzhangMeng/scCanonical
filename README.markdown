@@ -76,7 +76,7 @@ Control@condition <- "Control"     # Here, you MUST use the word condition for a
 Tumor@condition <- "Tumor"         # Here, you MUST use the word condition for assigning group informaiton
 ````
 
-```R
+```r
 # Then prepare list
 for (i in 1:length(Cell.list)) {
   Cell.list[[i]] <- SCTransform(Cell.list[[i]], verbose = FALSE)
