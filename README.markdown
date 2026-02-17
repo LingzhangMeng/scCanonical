@@ -68,7 +68,34 @@ Seurat, dplyr, ggplot2, reshape2 and ggrepel
 
 ## Workflow
 The following workflow demonstrates how to use `scCanonical` to process scRNA-seq data, integrate datasets, identify canonical markers, and visualize results.
+### pre-processing for integration
+```R
+# assign "condition" to each group for integration
+# this package ONLY recognizes condtion" for down-streaming analysis.
+Control@condition <- "Control"
+Tumor@condition <- "Tumor"
+````
 
+```R
+# Then prepare list
+for (i in 1:length(Cell.list)) {
+  Cell.list[[i]] <- SCTransform(Cell.list[[i]], verbose = FALSE)
+}
+
+Cell.features <- SelectIntegrationFeatures(object.list = Cell.list, nfeatures = 3000)
+
+Cell.list <- PrepSCTIntegration(object.list = Cell.list, anchor.features = Cell.features, 
+                                                         verbose = FALSE)
+
+Cell.anchors <- FindIntegrationAnchors(object.list = Cell.list, dims = 1:30, reduction="rpca", anchor.features = Cell.features, 
+                                                                normalization.method = "SCT", verbose = F)
+Cell.integrated <- IntegrateData(anchorset = Cell.anchors, normalization.method = "SCT", 
+                                 dims = 1:30, new.assay.name = "rpca", k.weight = 50, verbose = F)
+
+Cell.integrated <- ScaleData(Cell.integrated, verbose = T)
+```
+
+```R
 ### 1. Load and Prepare Seurat Objects
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
