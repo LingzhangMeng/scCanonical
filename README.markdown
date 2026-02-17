@@ -160,8 +160,34 @@ DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5,
 
 
 
+### 3. Find All Markers (FindAllMarkers)
+```R
+cat("\n--- Running FindAllMarkers ---\n")
+DefaultAssay(Cell.integrated) <- "RNA"
+Idents(Cell.integrated) <- "seurat_clusters"
 
+all.markers <- FindAllMarkers(Cell.integrated, only.pos = TRUE,
+                              min.pct = 0.1, logfc.threshold = 0.25,
+                              test.use = "wilcox")
+cat("All positive markers: ", nrow(all.markers), " rows\n")
+```
+```
+output
+All positive markers:  31151  rows
+```
 
+```R
+# Remove mitochondrial, ribosomal, and heat-shock genes
+rm_bad <- grepl("^MT-|^RPL|^RPS|^HSP|^Mt-|^Rpl|^Rps|^Hsp",
+                all.markers$gene, ignore.case = TRUE)
+all.markers <- subset(all.markers, !rm_bad)
+cat("After filtering MT/RP/HSP: ", nrow(all.markers), " rows\n")
+```
+
+```
+output
+After filtering MT/RP/HSP:  30622  rows
+```
 
 
 
