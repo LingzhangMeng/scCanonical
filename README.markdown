@@ -12,7 +12,8 @@ SpecScore for the already-conserved set. This keeps your specificity ranking ali
 Consider a gene 𝑔 and a cluster 𝑐. Let “others” (not 𝑐) be ¬𝑐.
 
 1) Average expression & log fold-change
-   Seurat’s DE returns an effect size as log2 fold change:
+
+Seurat’s DE returns an effect size as log2 fold change:
    
 <img width="189" height="60" alt="Weixin Image_20250909172325_139_103" src="https://github.com/user-attachments/assets/1ef2f6e0-f215-4165-8bb1-b59024445cd8" />
 
