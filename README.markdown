@@ -73,7 +73,7 @@ The following workflow demonstrates how to use `scCanonical` to process scRNA-se
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
 ```R
-# Load dependencies
+# 1. Load packages
 library(scCanonical)
 library(Seurat)
 library(dplyr)
@@ -82,7 +82,8 @@ library(ggrepel)
 ```
 
 ```R
-ls("package:scCanonical")
+# Load integrated seurat object
+Cell.integrated <- readRDS("//path/Seurat.Integration.rds")
 ```
 
 
