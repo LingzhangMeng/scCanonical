@@ -72,8 +72,8 @@ The following workflow demonstrates how to use `scCanonical` to process scRNA-se
 ```R
 # assign "condition" to each group for integration
 # this package ONLY recognizes condtion" for down-streaming analysis.
-Control@condition <- "Control"
-Tumor@condition <- "Tumor"
+-Control@condition <- "Control"
+-Tumor@condition <- "Tumor"
 ````
 
 ```R
