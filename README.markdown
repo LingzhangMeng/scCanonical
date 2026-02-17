@@ -69,7 +69,7 @@ Seurat, dplyr, ggplot2, reshape2 and ggrepel
 ## Workflow
 The following workflow demonstrates how to use `scCanonical` to process scRNA-seq data, integrate datasets, identify canonical markers, and visualize results.
 
-### 1. Load and Prepare Seurat Objects
+### Load and Prepare Seurat Objects
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
 ```R
