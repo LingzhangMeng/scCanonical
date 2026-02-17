@@ -69,7 +69,7 @@ Seurat, dplyr, ggplot2, reshape2 and ggrepel
 ## Workflow
 The following workflow demonstrates how to use `scCanonical` to process scRNA-seq data, integrate datasets, identify canonical markers, and visualize results.
 ### pre-processing for integration
-```R
+```diff
 # assign "condition" to each group for integration
 # this package ONLY recognizes condtion" for down-streaming analysis.
 -Control@condition <- "Control"
