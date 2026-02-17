@@ -21,11 +21,14 @@ Seurat’s DE returns an effect size as log2 fold change:
 <img width="400" height="70" alt="Weixin Image_20250909172418_140_103" src="https://github.com/user-attachments/assets/acf22261-4846-4625-b709-8917f3aa51de" />
 
 
+
 2) Detection rates (prevalence)
    
    <img width="380" height="40" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
    
 These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
+
+
 
 3) Specificity score (my algorithm)
    
@@ -33,10 +36,14 @@ These are fractions of cells with nonzero expression (after normalization on the
 
 <img width="672" height="120" alt="Weixin Image_20250909172642_143_103" src="https://github.com/user-attachments/assets/33b3a21d-a886-4fd8-8a59-264397dfad7c" />
 
+
+
 4) Canonical selection rule
    After computing SpecScore, you apply two simple gates before ranking:
    <img width="407" height="40" alt="image" src="https://github.com/user-attachments/assets/0d6557db-91b8-4c65-a98b-c89732c6b3a3" />
    
+
+
 Then you take the top 4 (for exmaple) by SpecScore per cluster:
 
 <img width="374" height="40" alt="image" src="https://github.com/user-attachments/assets/a0760f60-6b4d-44fd-b2e3-9d249cb6d5fe" />
