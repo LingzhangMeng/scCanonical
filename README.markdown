@@ -214,19 +214,47 @@ if (nrow(cons.joined) > 0) View(cons.joined)
 # Here in the below script, you can set either "n = 6" to selct top 6 canonical markers, or set "n = 4" to select top 4 canonical markers
 # or to set the other top canonical numbers, for exmaple, n = 1, n = 2, n = 3, n=4, n = 5, n = 6, n = 7.
 # I suggest pick a number from 2 to 4, dependes on your purpose
+cons.joined$cluster <- as.character(cons.joined$cluster)
+
 canonical <- cons.joined %>%
   dplyr::filter(!is.na(spec_score), avg_log2FC > 0.5, (pct.1 - pct.2) >= 0.20) %>%
   dplyr::group_by(cluster) %>%
   dplyr::slice_max(order_by = spec_score, n = 4, with_ties = FALSE) %>%  
   dplyr::ungroup() %>%
   select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, highlight, everything()) %>%
-  mutate(cluster = as.numeric(as.character(cluster))) %>%
-  arrange(cluster, desc(spec_score))
+  arrange(as.numeric(cluster), desc(spec_score))
 cat("Canonical conserved markers kept: ", ifelse(nrow(canonical) > 0, nrow(canonical), 0), " rows\n")
 if (nrow(canonical) > 0) View(canonical)
 ```
 
 <img width="2506" height="266" alt="Weixin Image_20250909170655_138_103" src="https://github.com/user-attachments/assets/75c88eab-3fee-44c6-8bed-480efe39d6d7" />
+
+#### Rescue Skipped Clusters
+Some clusters may be skipped by `get_conserved_for_all()` when they have fewer than `min.cells.per.group` (default: 3) cells in any condition group. These clusters would otherwise be missing from the plots. The `rescue_skipped_clusters()` function fills this gap by computing canonical markers directly from `FindAllMarkers()` results, using the formula `avg_log2FC * (pct.1 - pct.2)` as the specificity score.
+
+```R
+# Rescue skipped clusters (if any)
+if (nrow(skipped.info) > 0) {
+  rescued <- rescue_skipped_clusters(
+    all_markers  = all.markers,
+    skipped      = skipped.info,
+    n            = 4,
+    min_log2FC   = 0.5,
+    min_delta_pct = 0.20
+  )
+
+  # Add delta_pct to rescued$all_genes if not already present
+  # (rescue_skipped_clusters adds it automatically)
+  # Combine rescued results with conserved results
+  cons.joined <- dplyr::bind_rows(cons.joined, rescued$all_genes)
+  canonical   <- dplyr::bind_rows(canonical, rescued$canonical)
+
+  cat("After rescue — cons.joined rows: ", nrow(cons.joined), "\n")
+  cat("After rescue — canonical rows:   ", nrow(canonical), "\n")
+} else {
+  cat("No clusters were skipped; nothing to rescue.\n")
+}
+```
 
 
 ### 4. Visualization

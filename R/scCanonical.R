@@ -125,6 +125,120 @@ get_conserved_for_all <- function(obj,
   )
 }
 
+#' Rescue Skipped Clusters Using FindAllMarkers Results
+#'
+#' For clusters skipped by \code{get_conserved_for_all()} (due to insufficient
+#' cells per group or missing groups), this function provides a fallback by
+#' computing canonical marker scores directly from \code{FindAllMarkers()}
+#' results using the formula \code{avg_log2FC * (pct.1 - pct.2)}.
+#'
+#' @param all_markers A data frame from Seurat's \code{FindAllMarkers()},
+#'   containing at least columns \code{gene}, \code{cluster}, \code{avg_log2FC},
+#'   \code{pct.1}, and \code{pct.2}.
+#' @param skipped A data frame of skipped cluster information, as returned by
+#'   \code{get_conserved_for_all()$skipped}. Must contain a \code{cluster}
+#'   column.
+#' @param n Integer specifying the number of top canonical markers to select per
+#'   skipped cluster (default: 4).
+#' @param min_log2FC Numeric minimum \code{avg_log2FC} threshold for filtering
+#'   candidate canonical markers (default: 0.5).
+#' @param min_delta_pct Numeric minimum \code{(pct.1 - pct.2)} threshold for
+#'   filtering candidate canonical markers (default: 0.20).
+#'
+#' @return A list with two elements:
+#'   \itemize{
+#'     \item \code{all_genes}: A data frame of all genes in the skipped clusters
+#'       from \code{all_markers}, with added columns \code{spec_score} and
+#'       \code{delta_pct}. Suitable for use as background points in plots
+#'       (analogous to \code{cons.joined}).
+#'     \item \code{canonical}: A data frame of the top \code{n} canonical markers
+#'       per skipped cluster, filtered by \code{min_log2FC} and
+#'       \code{min_delta_pct}, ranked by \code{spec_score}. Suitable for
+#'       highlighting in plots (analogous to \code{canonical}).
+#'   }
+#'
+#' @details
+#' When \code{get_conserved_for_all()} skips clusters because they lack
+#' sufficient cells per group for the conserved marker test, those clusters are
+#' absent from the downstream plots. This function rescues those clusters by
+#' using the \code{FindAllMarkers()} results (which do not require
+#' cross-condition testing) and computing a specificity score as
+#' \code{avg_log2FC * (pct.1 - pct.2)}.
+#'
+#' Unlike \code{add_specificity()} which uses \code{pmax(0, pct.1 - pct.2)},
+#' this function uses the raw difference \code{(pct.1 - pct.2)} since
+#' \code{FindAllMarkers()} with \code{only.pos = TRUE} already ensures positive
+#' fold changes and the percentage difference is generally positive for
+#' meaningful markers.
+#'
+#' The returned data frames can be row-bound with the conserved marker results
+#' (\code{cons.joined} and \code{canonical}) so that all clusters appear in the
+#' final plots produced by \code{plot_canonicals()} or
+#' \code{plot_canonicals_inline()}.
+#'
+#' @examples
+#' \dontrun{
+#' # After running get_conserved_for_all() and FindAllMarkers()
+#' cons_out <- get_conserved_for_all(Cell.integrated, grouping.var = "condition")
+#' all.markers <- FindAllMarkers(Cell.integrated, only.pos = TRUE,
+#'                               min.pct = 0.1, logfc.threshold = 0.25)
+#'
+#' # Rescue skipped clusters
+#' if (nrow(cons_out$skipped) > 0) {
+#'   rescued <- rescue_skipped_clusters(all.markers, cons_out$skipped, n = 4)
+#'
+#'   # Combine with conserved results for plotting
+#'   cons.joined <- dplyr::bind_rows(cons.joined, rescued$all_genes)
+#'   canonical   <- dplyr::bind_rows(canonical, rescued$canonical)
+#' }
+#' }
+#'
+#' @importFrom dplyr filter mutate group_by slice_max ungroup arrange desc
+#' @export
+rescue_skipped_clusters <- function(all_markers,
+                                    skipped,
+                                    n = 4,
+                                    min_log2FC = 0.5,
+                                    min_delta_pct = 0.20) {
+  if (nrow(skipped) == 0) {
+    message("No skipped clusters to rescue.")
+    return(list(all_genes = data.frame(), canonical = data.frame()))
+  }
+
+  skipped_ids <- unique(as.character(skipped$cluster))
+
+  rescued <- all_markers[as.character(all_markers$cluster) %in% skipped_ids, ,
+                         drop = FALSE]
+
+  if (nrow(rescued) == 0) {
+    message("No markers found in FindAllMarkers() for skipped clusters: ",
+            paste(skipped_ids, collapse = ", "))
+    return(list(all_genes = data.frame(), canonical = data.frame()))
+  }
+
+  rescued$cluster    <- as.character(rescued$cluster)
+  rescued$spec_score <- rescued$avg_log2FC * (rescued$pct.1 - rescued$pct.2)
+  rescued$delta_pct  <- rescued$pct.1 - rescued$pct.2
+
+  canonical_rescued <- rescued %>%
+    dplyr::filter(!is.na(spec_score),
+                  avg_log2FC > min_log2FC,
+                  (pct.1 - pct.2) >= min_delta_pct) %>%
+    dplyr::group_by(cluster) %>%
+    dplyr::slice_max(order_by = spec_score, n = n, with_ties = FALSE) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(cluster, dplyr::desc(spec_score))
+
+  message("Rescued ", length(skipped_ids), " skipped cluster(s): ",
+          paste(skipped_ids, collapse = ", "),
+          " (", nrow(canonical_rescued), " canonical markers selected)")
+
+  list(
+    all_genes = rescued,
+    canonical = canonical_rescued
+  )
+}
+
 #' Calculate Specificity Score for Differential Expression Results
 #'
 #' This function calculates a specificity score for each gene in a differential
