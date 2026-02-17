@@ -23,7 +23,7 @@ Seurat’s DE returns an effect size as log2 fold change:
 
 2) Detection rates (prevalence)
    
-   <img width="450" height="40" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
+   <img width="380" height="40" alt="Weixin Image_20250909172510_141_103" src="https://github.com/user-attachments/assets/f7fa7f51-a169-4e73-a79b-0cdd4d4f3e08" />
    
 These are fractions of cells with nonzero expression (after normalization on the chosen assay, e.g. RNA or SCT).
 
