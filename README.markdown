@@ -69,7 +69,7 @@ Seurat, dplyr, ggplot2, reshape2 and ggrepel
 ## Workflow
 The following workflow demonstrates how to use `scCanonical` to process scRNA-seq data, integrate datasets, identify canonical markers, and visualize results.
 
-### Load and Prepare Seurat Objects
+### 1. Load and Prepare Seurat Objects
 Read and visualize individual Seurat objects for different conditions (e.g., Control and Wounded).
 
 ```R
@@ -79,231 +79,37 @@ library(Seurat)
 library(dplyr)
 library(ggplot2)
 library(ggrepel)
-```
 
-```R
+
 # Load integrated seurat object
 Cell.integrated <- readRDS("//path/Seurat.Integration.rds")
 ```
 
 
-# Load Seurat objects created by the R package Seurat in advance
-Control <- readRDS("Path/Control.rds")
-Wounded <- readRDS("Path/Wounded.rds")
-```
 
-### 2. Data Integration
-Prepare the Seurat objects for integration by assigning condition metadata and performing SCTransform, feature selection, and integration.
-
+### 2. Check Metadata and Cluster Distribution
 ```R
-# Assign condition metadata
-# In this tutorial, we use "condition" as the key word for defining groups 
-Control$condition <- "Control"
-Wounded$condition <- "Wounded"
-```
-```R
-# These are the standard procedure to create integrated seurat object
-# Create a list of Seurat objects
-Cell.list <- list(Control, Wounded)
-
-# Remove individual objects to save memory
-rm(Control, Wounded)
-
-# Apply SCTransform to each object
-for (i in 1:length(Cell.list)) {
-  Cell.list[[i]] <- SCTransform(Cell.list[[i]], verbose = FALSE)
-}
-
-# Select integration features
-Cell.features <- SelectIntegrationFeatures(object.list = Cell.list, nfeatures = 3000)
-
-# Prepare for integration
-Cell.list <- PrepSCTIntegration(object.list = Cell.list, anchor.features = Cell.features, verbose = FALSE)
-
-# Find integration anchors
-Cell.anchors <- FindIntegrationAnchors(object.list = Cell.list, dims = 1:30, reduction = "rpca", 
-                                      anchor.features = Cell.features, normalization.method = "SCT", verbose = FALSE)
-
-# Integrate datasets
-Cell.integrated <- IntegrateData(anchorset = Cell.anchors, normalization.method = "SCT", 
-                                dims = 1:30, new.assay.name = "rpca", k.weight = 50, verbose = FALSE)
-
-# Clean up
-rm(Cell.list, Cell.anchors, Cell.features)
-
-# Perform integrated analysis
-Cell.integrated <- ScaleData(Cell.integrated, verbose = TRUE)
-Cell.integrated <- RunPCA(Cell.integrated, npcs = 30, verbose = TRUE)
-Cell.integrated <- RunUMAP(Cell.integrated, reduction = "pca", dims = 1:30, verbose = TRUE)
-Cell.integrated <- FindNeighbors(Cell.integrated, reduction = "pca", dims = 1:30, verbose = TRUE)
-Cell.integrated <- FindClusters(Cell.integrated, pc.use = 1:10, resolution = 0.42, group.singletons = TRUE, verbose = FALSE)
-
-# Visualize integrated data
-DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5, label = TRUE, label.size = 6, label.box = FALSE)
-```
-<img width="445" height="368" alt="Weixin Image_20250909164956_133_103" src="https://github.com/user-attachments/assets/9b55bd17-386e-436e-943b-cc35d161c8f2" />
-
-
-
-### 3. Marker Identification
-Identify conserved markers across conditions and compute specificity scores.
-
-```R
-# Safety checks
+# Safety checks for required metadata columns
 if (!"condition" %in% colnames(Cell.integrated@meta.data)) {
-  stop("'condition' metadata column is missing in Cell.integrated.")
+  stop("'condition' metadata column is missing in Cell.integrated. ",
+       "Please set it before proceeding, e.g.:\n",
+       "  Cell.integrated$condition <- Cell.integrated$your_grouping_column")
 }
 if (!"seurat_clusters" %in% colnames(Cell.integrated@meta.data)) {
   stop("'seurat_clusters' metadata column is missing. Run clustering first.")
 }
 
-# Set cluster identities
+# Show cluster x condition breakdown
 Idents(Cell.integrated) <- "seurat_clusters"
+cat("\nClusters: ", paste(levels(Idents(Cell.integrated)), collapse = ", "), "\n")
 
-# Find all positive markers
-DefaultAssay(Cell.integrated) <- "RNA"
-all.markers <- FindAllMarkers(Cell.integrated, only.pos = TRUE, min.pct = 0.1, logfc.threshold = 0.25, test.use = "wilcox")
-cat("All positive markers: ", nrow(all.markers), " rows\n")
-
-# Remove mitochondrial, ribosomal, and heat-shock genes
-rm_bad <- grepl("^MT-|^RPL|^RPS|^HSP|^Mt-|^Rpl|^Rps|^Hsp", all.markers$gene, ignore.case = TRUE)
-all.markers <- subset(all.markers, !rm_bad)
-cat("First-pass markers computed after filtering: ", nrow(all.markers), " rows\n")
-
-# View results
-View(all.markers)
-```
-<img width="333" height="532" alt="Weixin Image_20250909165253_134_103" src="https://github.com/user-attachments/assets/a1fa092b-1273-41d3-8df6-10a96ddc11ed" />
-
-```R
-# Find conserved markers
-cons_out <- get_conserved_for_all(
-  Cell.integrated,
-  grouping.var = "condition",
-  min.pct = 0.1,
-  logfc.threshold = 0.25,
-  pval_meta_cutoff = 0.05,
-  min.cells.per.group = 3
-)
-
-cons.condition <- cons_out$results
-skipped.info <- cons_out$skipped
-cons.condition <- cons.condition %>% select(cluster, gene, everything())
-cat("Conserved markers kept: ", ifelse(nrow(cons.condition) > 0, nrow(cons.condition), 0), " rows\n")
-if (nrow(cons.condition) > 0) View(cons.condition)
-if (nrow(skipped.info) > 0) View(skipped.info)
-```
-<img width="923" height="430" alt="Weixin Image_20250909165512_135_103" src="https://github.com/user-attachments/assets/b3a3e5e3-ff00-4f97-bc60-2e096b6cada9" />
-<img width="135" height="78" alt="Weixin Image_20250909165523_136_103" src="https://github.com/user-attachments/assets/3b198841-fe23-4ea6-ad04-f618ebe192ef" />
-
-
-```R
-# Compute specificity scores
-cons.joined <- cons.condition %>%
-  dplyr::left_join(
-    all.markers %>% dplyr::select(gene, cluster, avg_log2FC, pct.1, pct.2),
-    by = c("gene", "cluster")
-  ) %>%
-  add_specificity()
-
-cons.joined <- cons.joined %>% 
-  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2,  everything())
-cat("Conserved + specificity (joined) rows: ", ifelse(nrow(cons.joined) > 0, nrow(cons.joined), 0), "\n")
-if (nrow(cons.joined) > 0) View(cons.joined)
-```
-<img width="2475" height="1075" alt="Weixin Image_20250909165801_137_103" src="https://github.com/user-attachments/assets/8a63ec8b-01d8-411d-9890-3ed92089a1b4" />
-
-```R
-# Select top canonical markers
-# Here in the below script, you can set either "n = 6" to selct top 6 canonical markers, or set "n = 4" to select top 4 canonical markers
-# or to set the other top canonical numbers, for exmaple, n = 1, n = 2, n = 3, n=4, n = 5, n = 6, n = 7.
-# I suggest pick a number from 2 to 4, dependes on your purpose
-cons.joined$cluster <- as.character(cons.joined$cluster)
-
-canonical <- cons.joined %>%
-  dplyr::filter(!is.na(spec_score), avg_log2FC > 0.5, (pct.1 - pct.2) >= 0.20) %>%
-  dplyr::group_by(cluster) %>%
-  dplyr::slice_max(order_by = spec_score, n = 4, with_ties = FALSE) %>%  
-  dplyr::ungroup() %>%
-  select(cluster, gene, spec_score, avg_log2FC, pct.1, pct.2, highlight, everything()) %>%
-  arrange(as.numeric(cluster), desc(spec_score))
-cat("Canonical conserved markers kept: ", ifelse(nrow(canonical) > 0, nrow(canonical), 0), " rows\n")
-if (nrow(canonical) > 0) View(canonical)
 ```
 
-<img width="2506" height="266" alt="Weixin Image_20250909170655_138_103" src="https://github.com/user-attachments/assets/75c88eab-3fee-44c6-8bed-480efe39d6d7" />
-
-#### Rescue Skipped Clusters
-Some clusters may be skipped by `get_conserved_for_all()` when they have fewer than `min.cells.per.group` (default: 3) cells in any condition group. These clusters would otherwise be missing from the plots. The `rescue_skipped_clusters()` function fills this gap by computing canonical markers directly from `FindAllMarkers()` results, using the formula `avg_log2FC * (pct.1 - pct.2)` as the specificity score.
-
-```R
-# Rescue skipped clusters (if any)
-if (nrow(skipped.info) > 0) {
-  rescued <- rescue_skipped_clusters(
-    all_markers  = all.markers,
-    skipped      = skipped.info,
-    n            = 4,
-    min_log2FC   = 0.5,
-    min_delta_pct = 0.20
-  )
-
-  # Add delta_pct to rescued$all_genes if not already present
-  # (rescue_skipped_clusters adds it automatically)
-  # Combine rescued results with conserved results
-  cons.joined <- dplyr::bind_rows(cons.joined, rescued$all_genes)
-  canonical   <- dplyr::bind_rows(canonical, rescued$canonical)
-
-  cat("After rescue — cons.joined rows: ", nrow(cons.joined), "\n")
-  cat("After rescue — canonical rows:   ", nrow(canonical), "\n")
-} else {
-  cat("No clusters were skipped; nothing to rescue.\n")
-}
+```
+output
+Clusters:  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 
 ```
 
-
-### 4. Visualization
-Generate faceted plots to compare conserved and canonical markers.
-
-```R
-# Add percentage difference
-cons.joined <- cons.joined %>% mutate(delta_pct = pct.1 - pct.2)
-canonical <- canonical %>% mutate(delta_pct = pct.1 - pct.2)
-
-# Mark canonical genes
-cons.joined$highlight <- ifelse(cons.joined$gene %in% canonical$gene, "canonical", "other")
-
-# Define cluster order and colors
-cluster_order <- unique(cons.joined$cluster)
-cons.joined$cluster <- factor(cons.joined$cluster, levels = cluster_order)
-canonical$cluster <- factor(canonical$cluster, levels = cluster_order)
-
-# Custom color palette
-cb_palette <- c("#ed1299", "#09f9f5", "#246b93", "#cc8e12", "#d561dd", "#c93f00", "#ddd53e", "#4aef7b", 
-                "#e86502", "#9ed84e", "#AB3282", "#CCC9E6", "#8249aa", "#99db27", "#DCC1DD", "#ff523f",
-                "#ce2523", "#f7aa5d", "#cebb10", "#03827f", "#931635", "#373bbf", "#a1ce4c", "#ef3bb6", 
-                "#d66551", "#1a918f", "#ff66fc", "#2927c4", "#7149af", "#57e559" ,"#8e3af4" ,"#f9a270",
-                "#22547f", "#db5e92", "#edd05e", "#6f25e8", "#0dbc21", "#280f7a", "#6373ed", "#5b910f")
-custom_colors <- cb_palette[1:length(cluster_order)]
-names(custom_colors) <- cluster_order
-```
-
-```R
-# Generate plots, canonical markers will show on each cluster, seperately
-plot_canonicals(cons.joined, canonical, custom_colors)
-```
-![Rplot](https://github.com/user-attachments/assets/0524f74c-ff44-4ddf-b0b7-798a987542a1)
-
-```R
-# Generate plots, canonical markers will show on each cluster, facetly
-plot_canonicals_inline(cons.joined, canonical, custom_colors)
-```
-![Rplot01](https://github.com/user-attachments/assets/3ef1851d-20c1-4be7-946e-d066746a236d)
-
-
-
-## Output
-- **Data Frames**: The workflow generates data frames (`all.markers`, `cons.condition`, `cons.joined`, `canonical`) that can be viewed using `View()` for manual inspection.
-- **Plots**: UMAP visualizations and faceted marker plots are saved as PDF and JPEG files or displayed inline.
 
 ## Notes
 - Ensure that the Seurat object contains `condition` and `seurat_clusters` metadata columns before running marker identification.
