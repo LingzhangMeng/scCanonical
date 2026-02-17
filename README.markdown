@@ -48,7 +48,7 @@ Then you take the top 4 (for exmaple) by SpecScore per cluster:
 ## Installation
 To install `scCanonical` from GitHub, use the following commands in R:
 
-```R
+```Language-R
 # Install devtools if not already installed
 if (!requireNamespace("devtools", quietly = TRUE)) {
   install.packages("devtools")
