@@ -156,7 +156,7 @@ DimPlot(Cell.integrated, raster = FALSE, pt.size = 0.5,
 ```
 
 
-<img width="672" height="677" alt="image" src="https://github.com/user-attachments/assets/9d09572d-9c33-4779-a2fd-0225568ca37e" />
+<img width="380" height="335" alt="image" src="https://github.com/user-attachments/assets/9d09572d-9c33-4779-a2fd-0225568ca37e" />
 
 
 
